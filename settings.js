@@ -2,9 +2,9 @@ const fs = require('fs');
 const chalk = require('chalk');
 
 // Settings Bot 
-global.linkowner = 'wa.me/6281997715124' // Ganti dengan nomor WhatsApp owner
-global.owner = '6281997715124' // Ganti dengan nomor WhatsApp owner
-global.namastore = "AiorDev Store"
+global.linkowner = 'wa.me/628388910861' // Ganti dengan nomor WhatsApp owner
+global.owner = '628388910861' // Ganti dengan nomor WhatsApp owner
+global.namastore = "AiorDev"
 global.versi = "1.0"
 global.namaOwner = "AiorDev"
 global.packname = 'AiorDev Bot'
