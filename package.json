@@ -18,7 +18,6 @@
   "dependencies": {
     "@whiskeysockets/baileys": "github:whiskeysockets/baileys",
     "chalk": "^4.1.2",
-    "dotenv": "^16.0.3",
     "qrcode-terminal": "^0.12.0"
   }
 }
