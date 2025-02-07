@@ -1,0 +1,24 @@
+{
+  "name": "AiorDev-Bot",
+  "version": "1.0.0",
+  "description": "WhatsApp Bot By AiorDev",
+  "main": "start.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node start.js"
+  },
+  "keywords": [
+    "whatsapp",
+    "whatsapp-bot",
+    "baileys",
+    "aiordev"
+  ],
+  "author": "AiorDev",
+  "license": "MIT",
+  "dependencies": {
+    "@whiskeysockets/baileys": "github:whiskeysockets/baileys",
+    "chalk": "^4.1.2",
+    "dotenv": "^16.0.3",
+    "qrcode-terminal": "^0.12.0"
+  }
+}
