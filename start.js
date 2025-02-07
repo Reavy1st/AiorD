@@ -12,14 +12,14 @@ async function startBot() {
         version,
         auth: state,
         printQRInTerminal: false, // Nonaktifkan QR code di terminal
-        logger: console,
+        logger: { level: 'silent' }, // Nonaktifkan logger bawaan
     });
 
     sock.ev.on('creds.update', saveCreds);
 
     // Generate Pairing Code
     sock.ev.on('connection.update', (update) => {
-        const { connection, qr, isNewLogin } = update;
+        const { connection, qr } = update;
 
         if (connection === 'close') {
             console.log(chalk.red('Koneksi terputus, mencoba menghubungkan kembali...'));
@@ -39,11 +39,11 @@ async function startBot() {
         const msg = messages[0];
         if (!msg.message) return;
 
-        const userJid = msg.key.remoteJid;
+        const userJid = msg.key.remoteJid; // ID pengirim
         const text = msg.message.conversation || msg.message.extendedTextMessage?.text || '';
 
         if (text.toLowerCase() === 'menu') {
-            const userName = msg.pushName || 'you';
+            const userName = msg.pushName || 'you'; // Ambil nama pengguna
             const buttonMessage = {
                 text: `Hi @${userName}! Silakan pilih menu di bawah ini:`,
                 footer: 'AiorDev - By AiorDev Team',
