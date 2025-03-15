@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pterodactyl Console & Info</title>
+    <style>
+        /* Reset default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* General body styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1E2A78, #3E4A89);
+            color: #fff;
+            padding: 50px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Container for the entire content */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        /* Styling for the console box */
+        .console-box {
+            background: linear-gradient(135deg, #1e2a78, #3e4a89);
+            color: #fff;
+            border-radius: 15px;
+            padding: 25px;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .console-box::before {
+            content: '';
+            position: absolute;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #3498db;
+            opacity: 0.6;
+        }
+
+        /* Console content styling */
+        .console-content {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .console-box pre {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            background: #23232e;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.6;
+        }
+
+        /* Info Cards Layout */
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 columns */
+            grid-template-rows: repeat(3, 1fr); /* 3 rows */
+            gap: 20px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        /* Card styling */
+        .card {
+            background: #2c3e50;
+            color: #fff;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s;
+        }
+
+        /* Hover effect for cards */
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Card Titles */
+        .card h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        /* Card Paragraphs */
+        .card p {
+            font-size: 16px;
+            color: #ddd;
+        }
+
+        /* IP Address Card Styling */
+        .ip-card {
+            background: #16a085;
+            color: #fff;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 100%;
+        }
+
+        /* Button */
+        button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            display: block;
+            margin: 10px auto;
+        }
+
+        /* Button Hover */
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Console Output Card -->
+        <div id="consoleCard" class="card console-box">
+            <h2>Server Console</h2>
+            <div class="console-content">
+                <pre id="consoleOutput">Loading console...</pre>
+            </div>
+            <button onclick="refreshConsole()">Refresh Console</button>
+        </div>
+
+        <!-- Info Cards -->
+        <div class="info-cards">
+            <div class="card" id="portCard">
+                <h3>Port</h3>
+                <p id="port">Loading...</p>
+            </div>
+            <div class="card" id="memoryCard">
+                <h3>Memory</h3>
+                <p id="memory">Loading...</p>
+            </div>
+            <div class="card" id="ramCard">
+                <h3>RAM</h3>
+                <p id="ram">Loading...</p>
+            </div>
+            <div class="card" id="diskCard">
+                <h3>Disk</h3>
+                <p id="disk">Loading...</p>
+            </div>
+            <div class="card" id="cpuCard">
+                <h3>CPU</h3>
+                <p id="cpu">Loading...</p>
+            </div>
+            <div class="card" id="pingCard">
+                <h3>Ping</h3>
+                <p id="ping">Loading...</p>
+            </div>
+        </div>
+
+        <!-- IP Address Card -->
+        <div class="ip-card">
+            <h3>IP Address</h3>
+            <p id="ipAddress">Loading...</p>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script>
+        const apiKey = 'ptla_ZRfJMwcnrqinSp9jmjG6MZb5hrYE4dhun1qqyusMFyh';
+        const serverId = '08634984-4f97-4c33-9ae1-41a5c1523b4b';
+        const baseUrl = 'https://renzokuhiro.zerohiro.biz.id/server/08634984-4f97-4c33-9ae1-41a5c1523b4b';
+
+        // Fetch console output
+        function fetchConsole() {
+            axios.get(`${baseUrl}/servers/${serverId}/console`, {
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                    'Accept': 'Application/json',
+                }
+            }).then(response => {
+                document.getElementById('consoleOutput').textContent = response.data.data;
+            }).catch(error => {
+                console.error('Error fetching console:', error);
+            });
+        }
+
+        // Fetch server info
+        function fetchServerInfo() {
+            axios.get(`${baseUrl}/servers/${serverId}`, {
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                    'Accept': 'Application/json',
+                }
+            }).then(response => {
+                document.getElementById('ipAddress').textContent = response.data.attributes.server_ips;
+                document.getElementById('port').textContent = response.data.attributes.port;
+                document.getElementById('memory').textContent = response.data.attributes.memory;
+                document.getElementById('ram').textContent = response.data.attributes.ram;
+                document.getElementById('disk').textContent = response.data.attributes.disk;
+                document.getElementById('cpu').textContent = response.data.attributes.cpu;
+                document.getElementById('ping').textContent = response.data.attributes.ping;
+            }).catch(error => {
+                console.error('Error fetching server info:', error);
+            });
